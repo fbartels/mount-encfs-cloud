@@ -17,14 +17,17 @@ ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml
 ## no need to change anything below
 
 # if a config file has been specified with BACKUP_CONFIG=myfile use this one, otherwise default to config
+set +u
+BASE_PATH="$(dirname "$(readlink -f "$0")")"
 if [[ ! -n "$BACKUP_CONFIG" ]]; then
-	BACKUP_CONFIG=config
+	BACKUP_CONFIG="$BASE_PATH/config"
 fi
 
 if [ -e $BACKUP_CONFIG ]; then
 	echo "using config from file: $BACKUP_CONFIG"
-	source $BACKUP_CONFIG
+	source "$BACKUP_CONFIG"
 fi
+set -u
 
 # check dependencies
 if [ ! "$(which encfs)" ]; then

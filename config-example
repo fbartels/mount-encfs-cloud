@@ -1,0 +1,9 @@
+MOUNT_ROOT="/media/cloud"
+CLOUD_PATH="$MOUNT_ROOT/source"
+CRYPT_PATH="$CLOUD_PATH/.private"
+ENCFS_PATH="$MOUNT_ROOT/.decrypted"
+ENCFS_REVERSE_PATH="$MOUNT_ROOT/.cache-encrypted"
+OVERLAY_CACHE="$MOUNT_ROOT/.cache"
+OVERLAY_PATH="$MOUNT_ROOT/local"
+ENCFS_PASSWORD=$HOME/.config/encfs-password
+ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml

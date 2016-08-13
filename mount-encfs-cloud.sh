@@ -99,7 +99,7 @@ mount_overlay(){
 	test_fuse
 	mkdir -p $OVERLAY_CACHE $OVERLAY_PATH
 	echo "mount overlay"
-	unionfs-fuse -o cow -o allow_other $OVERLAY_CACHE=RW:$ENCFS_PATH=RO $OVERLAY_PATH
+	unionfs-fuse -o cow -o allow_other -o hide_meta_files $OVERLAY_CACHE=RW:$ENCFS_PATH=RO $OVERLAY_PATH
 }
 
 create_encfs(){
@@ -174,7 +174,7 @@ sync)
 	;;
 clean-deleted)
 	echo "cleaning locally deleted files from acd, remove empty dirs in cache"
-	rsync --recursive --delete --existing --ignore-existing $OVERLAY_PATH/ $ENCFS_PATH/
+	rsync --verbose --recursive --delete --existing --ignore-existing $OVERLAY_PATH/ $ENCFS_PATH/
 	if [ -d $OVERLAY_CACHE/.unionfs-fuse ]; then
 		rm -rf $OVERLAY_CACHE/.unionfs-fuse
 	fi
@@ -182,7 +182,7 @@ clean-deleted)
 	if [ "$(ls -A $OVERLAY_CACHE)" ]; then
 		find $OVERLAY_CACHE -type d -empty -delete
 	fi
-	#sudo mount -t unionfs -o remount,incgen $OVERLAY_PATH
+	sudo sudo mount -t unionfs -o remount,incgen unionfs $OVERLAY_PATH
 	;;
 check-mount)
 	set +e

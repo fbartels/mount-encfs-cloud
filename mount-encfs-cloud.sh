@@ -193,4 +193,8 @@ check-mount)
 		$0 mount > /dev/null
 	fi
 	;;
+*)
+	echo "unknown command"
+	echo "Available options are: mount, unmount, sync, clean-deleted, check-mount"
+	;;
 esac

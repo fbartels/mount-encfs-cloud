@@ -99,7 +99,7 @@ mount_overlay(){
 	test_fuse
 	mkdir -p $OVERLAY_CACHE $OVERLAY_PATH
 	echo "mount overlay"
-	unionfs-fuse -o cow -o allow_other -o hide_meta_files $OVERLAY_CACHE=RW:$ENCFS_PATH=RO $OVERLAY_PATH
+	unionfs-fuse -o cow -o allow_other $OVERLAY_CACHE=RW:$ENCFS_PATH=RO $OVERLAY_PATH
 }
 
 create_encfs(){

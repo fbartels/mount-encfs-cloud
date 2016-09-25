@@ -161,9 +161,6 @@ sync)
 		acd_cli upload --overwrite $ENCFS_REVERSE_PATH/* /$(basename $CRYPT_PATH)/  --max-connections 10
 		sleep 3
 		acd_cli sync
-		# delete files from local cache 14 days after they have been created
-		find $OVERLAY_CACHE -type f -mtime +14 -delete
-		#sudo mount -t unionfs -o remount,incgen $OVERLAY_PATH
 	else
 		echo "Nothing to sync"
 	fi
@@ -183,6 +180,12 @@ clean-deleted)
 		find $OVERLAY_CACHE -type d -empty -delete
 	fi
 	sudo sudo mount -t unionfs -o remount,incgen unionfs $OVERLAY_PATH
+	;;
+clean-ols-files)
+	days=730
+	echo "deleting files older than $days days"
+	find $OVERLAY_CACHE -type f -mtime +$days -delete
+	find $OVERLAY_CACHE -type d -empty -delete
 	;;
 check-mount)
 	set +e

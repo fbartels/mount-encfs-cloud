@@ -158,7 +158,14 @@ sync)
 	# optionally --remove-source-files could be used in upload, but this leads to situations where files are
 	# removed from $ENCFS_REVERSE_PATH, but not yes listed in $CRYPT_PATH)
 	if [ "$(ls -A $ENCFS_REVERSE_PATH)" ]; then
-		acd_cli upload --overwrite $ENCFS_REVERSE_PATH/* /$(basename $CRYPT_PATH)/  --max-connections 10
+		if [ $(which rclone) ]; then
+			#BACKUP_CONFIG=/home/fbartels/.config/acd-encfs-config $HOME/dev-workspace/git/rclone-encfs-wrapper/rclone-encfs-wrapper.sh
+			RCLONE_REMOTE="acd"                             # name of the remote configured in rclone
+			RCLONE_PATH=$(basename $CRYPT_PATH)		# directory at cloud provider, will be created if it does not exist
+			echo rclone --verbose --transfers=1 copy $ENCFS_REVERSE_PATH "$RCLONE_REMOTE":/"$RCLONE_PATH"
+		else
+			acd_cli upload --overwrite $ENCFS_REVERSE_PATH/* /$(basename $CRYPT_PATH)/  --max-connections 10
+		fi
 		sleep 3
 		acd_cli sync
 	else

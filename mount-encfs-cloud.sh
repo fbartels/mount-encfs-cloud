@@ -162,7 +162,7 @@ sync)
 			#BACKUP_CONFIG=/home/fbartels/.config/acd-encfs-config $HOME/dev-workspace/git/rclone-encfs-wrapper/rclone-encfs-wrapper.sh
 			RCLONE_REMOTE="acd"                             # name of the remote configured in rclone
 			RCLONE_PATH=$(basename $CRYPT_PATH)		# directory at cloud provider, will be created if it does not exist
-			echo rclone --verbose --transfers=1 copy $ENCFS_REVERSE_PATH "$RCLONE_REMOTE":/"$RCLONE_PATH"
+			rclone --verbose --transfers=1 copy $ENCFS_REVERSE_PATH "$RCLONE_REMOTE":/"$RCLONE_PATH"
 		else
 			acd_cli upload --overwrite $ENCFS_REVERSE_PATH/* /$(basename $CRYPT_PATH)/  --max-connections 10
 		fi

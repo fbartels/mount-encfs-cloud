@@ -86,7 +86,12 @@ mount_encfs(){
 		sleep 1
 	done
 	echo "mount encfs dir"
-	ENCFS6_CONFIG=$ENCFS_CONFIG encfs -o allow_other --ondemand --idle=5 --extpass="cat $ENCFS_PASSWORD" $CRYPT_PATH $ENCFS_PATH
+	UMASK=007
+	USER=emby
+	GROUP=emby
+	uid=$(id -u $USER)
+	gid=$(getent group $GROUP | cut -d: -f 3)
+	ENCFS6_CONFIG=$ENCFS_CONFIG encfs -o allow_other -o umask=$UMASK,gid=$gid,uid=$uid --ondemand --idle=5 --extpass="cat $ENCFS_PASSWORD" $CRYPT_PATH $ENCFS_PATH
 }
 
 mount_reverse_encfs(){

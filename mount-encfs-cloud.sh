@@ -44,7 +44,7 @@ if [ ! "$(which unionfs-fuse)" ]; then
 	exit 1
 fi
 
-if [ ! "$(which acd_cli)" ] || [ ! "$(which acd_cli)" ]; then
+if [ ! "$(which acd_cli)" ] || [ ! "$(which rclone)" ]; then
 	echo "Neither acd_cli nor rclone is not installed"
 	echo "https://github.com/yadayada/acd_cli/blob/master/docs/setup.rst"
 	echo "http://rclone.org/install/"
@@ -72,16 +72,16 @@ test_fuse(){
 	fi
 }
 
-mount_clouddir(){
+mount_clouddir_acdcli(){
 	#check_mounted $CLOUD_PATH
 	if grep -qs $CLOUD_PATH /proc/mounts; then
 		echo "already mounted"
 		exit 1
 	fi
 	mkdir -p $CLOUD_PATH
-	echo "sync acd metadata"
+	echo "sync acd_cli metadata"
 	acd_cli sync
-	echo "mount acd"
+	echo "mount acd_cli"
 	acd_cli mount --allow-other --interval 0 $CLOUD_PATH
 	# wait for mount to settle
 	sleep 5
@@ -145,7 +145,7 @@ runoption=${1:-mount}
 
 case $runoption in
 mount)
-	mount_clouddir
+	mount_clouddir_acdcli
 	mount_encfs
 	mount_overlay
 	;;
@@ -176,6 +176,7 @@ sync)
 			acd_cli upload --overwrite $ENCFS_REVERSE_PATH/* /$(basename $CRYPT_PATH)/  --max-connections 10
 		fi
 		sleep 3
+		#refresh mount
 		acd_cli sync
 	else
 		echo "Nothing to sync"

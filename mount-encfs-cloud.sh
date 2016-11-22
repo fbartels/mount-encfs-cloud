@@ -13,6 +13,10 @@ OVERLAY_CACHE="$MOUNT_ROOT/.cache"
 OVERLAY_PATH="$MOUNT_ROOT/local"
 ENCFS_PASSWORD=$HOME/.config/encfs-password
 ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml
+# Mount settings
+USER=$(whoami)
+GROUP=users
+MOUNT_ENGINE=acdcli	# TODO can be acdcli or rclone
 
 ## no need to change anything below
 
@@ -40,11 +44,13 @@ if [ ! "$(which unionfs-fuse)" ]; then
 	exit 1
 fi
 
-if [ ! "$(which acd_cli)" ]; then
-	echo "acd_cli is not installed"
+if [ ! "$(which acd_cli)" ] || [ ! "$(which acd_cli)" ]; then
+	echo "Neither acd_cli nor rclone is not installed"
 	echo "https://github.com/yadayada/acd_cli/blob/master/docs/setup.rst"
+	echo "http://rclone.org/install/"
 	exit 1
 fi
+
 
 # script logic begins here
 # if CLOUD_PATH does not exist, check if folder is writeable, if not create and chown it with sudo
@@ -87,8 +93,6 @@ mount_encfs(){
 	done
 	echo "mount encfs dir"
 	UMASK=007
-	USER=emby
-	GROUP=emby
 	uid=$(id -u $USER)
 	gid=$(getent group $GROUP | cut -d: -f 3)
 	ENCFS6_CONFIG=$ENCFS_CONFIG encfs -o allow_other -o umask=$UMASK,gid=$gid,uid=$uid --ondemand --idle=5 --extpass="cat $ENCFS_PASSWORD" $CRYPT_PATH $ENCFS_PATH

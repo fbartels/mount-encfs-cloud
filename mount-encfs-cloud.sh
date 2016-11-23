@@ -13,6 +13,9 @@ OVERLAY_CACHE="$MOUNT_ROOT/.cache"
 OVERLAY_PATH="$MOUNT_ROOT/local"
 ENCFS_PASSWORD=$HOME/.config/encfs-password
 ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml
+# Rclone settings
+RCLONE_REMOTE="acd"                             # name of the remote configured in rclone
+RCLONE_PATH=$(basename $CRYPT_PATH)             # directory at cloud provider, will be created if it does not exist
 # Mount settings
 USER=$(whoami)
 GROUP=users
@@ -87,6 +90,18 @@ mount_clouddir_acdcli(){
 	sleep 5
 }
 
+mount_clouddir_rclone(){
+	#check_mounted $CLOUD_PATH
+	if grep -qs $CLOUD_PATH /proc/mounts; then
+		echo "already mounted"
+		exit 1
+	fi
+	mkdir -p $CLOUD_PATH
+	echo "mount rclone"
+	rclone mount "$RCLONE_REMOTE":/ $CLOUD_PATH &
+	sleep 5
+}
+
 mount_encfs(){
 	until $(mkdir -p $CRYPT_PATH $ENCFS_PATH); do
 		sleep 1
@@ -145,11 +160,17 @@ runoption=${1:-mount}
 
 case $runoption in
 mount)
-	mount_clouddir_acdcli
+	case $MOUNT_ENGINE in
+		acdcli) mount_clouddir_acdcli;;
+		rclone) mount_clouddir_rclone;;
+		*) echo "unknown engine"; exit 1;;
+	esac
 	mount_encfs
 	mount_overlay
 	;;
 umount|unmount)
+	# TODO create function for unmounting which checks if programs are still accessing the mount and retrying later on
+	# https://github.com/scriptzteam/rclone-re-mount/blob/master/rclone_remount.sh
 	set +e
 	echo "unmounting everything"
 	fusermount -u $OVERLAY_PATH
@@ -164,20 +185,19 @@ sync)
 		exit 1
 	fi
 	mount_reverse_encfs
-	# optionally --remove-source-files could be used in upload, but this leads to situations where files are
-	# removed from $ENCFS_REVERSE_PATH, but not yes listed in $CRYPT_PATH)
 	if [ "$(ls -A $ENCFS_REVERSE_PATH)" ]; then
 		if [ $(which rclone) ]; then
-			#BACKUP_CONFIG=/home/fbartels/.config/acd-encfs-config $HOME/dev-workspace/git/rclone-encfs-wrapper/rclone-encfs-wrapper.sh
-			RCLONE_REMOTE="acd"                             # name of the remote configured in rclone
-			RCLONE_PATH=$(basename $CRYPT_PATH)		# directory at cloud provider, will be created if it does not exist
 			rclone --verbose --transfers=1 copy $ENCFS_REVERSE_PATH "$RCLONE_REMOTE":/"$RCLONE_PATH"
 		else
 			acd_cli upload --overwrite $ENCFS_REVERSE_PATH/* /$(basename $CRYPT_PATH)/  --max-connections 10
 		fi
 		sleep 3
 		#refresh mount
-		acd_cli sync
+		case $MOUNT_ENGINE in
+			acdcli) acd_cli sync;;
+			rclone) $0 umount && $0 mount;;
+			*) echo "unknown engine"; exit 1;;
+		esac
 	else
 		echo "Nothing to sync"
 	fi
@@ -198,7 +218,7 @@ clean-deleted)
 	fi
 	sudo sudo mount -t unionfs -o remount,incgen unionfs $OVERLAY_PATH
 	;;
-clean-ols-files)
+clean-old-files)
 	days=730
 	echo "deleting files older than $days days"
 	find $OVERLAY_CACHE -type f -mtime +$days -delete

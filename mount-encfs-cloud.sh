@@ -8,7 +8,7 @@ CLOUD_PATH="$MOUNT_ROOT/source"
 CRYPT_PATH="$CLOUD_PATH/.private"
 ENCFS_PATH="$MOUNT_ROOT/.decrypted"
 ENCFS_REVERSE_PATH="$MOUNT_ROOT/.cache-encrypted"
-OVERLAY_CACHE="$MOUNT_ROOT/.cache"		ä local dir holding new files and changes not yet uploaded
+OVERLAY_CACHE="$MOUNT_ROOT/.cache"		# local dir holding new files and changes not yet uploaded
 OVERLAY_PATH="$MOUNT_ROOT/local"
 ENCFS_PASSWORD=$HOME/.config/encfs-password
 ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml
@@ -18,7 +18,7 @@ RCLONE_PATH=$(basename $CRYPT_PATH)             # directory at cloud provider, w
 # Mount settings
 USER=$(whoami)
 GROUP=users
-MOUNT_ENGINE=acdcli	# TODO can be acdcli or rclone
+MOUNT_ENGINE=acdcli				# can be acdcli or rclone, default to acdcli for now
 
 ## no need to change anything below
 

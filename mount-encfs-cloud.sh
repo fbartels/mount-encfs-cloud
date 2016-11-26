@@ -96,7 +96,7 @@ mount_clouddir_rclone(){
 	fi
 	mkdir -p $CLOUD_PATH
 	echo "mount rclone"
-	rclone mount "$RCLONE_REMOTE":/ $CLOUD_PATH &
+	rclone mount --allow-other --default-permissions "$RCLONE_REMOTE":/ $CLOUD_PATH &
 	sleep 5
 }
 

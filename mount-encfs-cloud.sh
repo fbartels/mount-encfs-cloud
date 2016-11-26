@@ -12,9 +12,11 @@ OVERLAY_CACHE="$MOUNT_ROOT/.cache"		# local dir holding new files and changes no
 OVERLAY_PATH="$MOUNT_ROOT/local"
 ENCFS_PASSWORD=$HOME/.config/encfs-password
 ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml
+
 # Rclone settings
-RCLONE_REMOTE="acd"                             # name of the remote configured in rclone
-RCLONE_PATH=$(basename $CRYPT_PATH)             # directory at cloud provider, will be created if it does not exist
+RCLONE_REMOTE="acd"				# name of the remote configured in rclone
+RCLONE_PATH=$(basename $CRYPT_PATH)		# directory at cloud provider, will be created if it does not exist
+
 # Mount settings
 USER=$(whoami)
 GROUP=users

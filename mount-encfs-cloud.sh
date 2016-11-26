@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-set -e
-set -u
+set -eu
 
 ## Defaults
 
@@ -9,7 +8,7 @@ CLOUD_PATH="$MOUNT_ROOT/source"
 CRYPT_PATH="$CLOUD_PATH/.private"
 ENCFS_PATH="$MOUNT_ROOT/.decrypted"
 ENCFS_REVERSE_PATH="$MOUNT_ROOT/.cache-encrypted"
-OVERLAY_CACHE="$MOUNT_ROOT/.cache"
+OVERLAY_CACHE="$MOUNT_ROOT/.cache"		ä local dir holding new files and changes not yet uploaded
 OVERLAY_PATH="$MOUNT_ROOT/local"
 ENCFS_PASSWORD=$HOME/.config/encfs-password
 ENCFS_CONFIG=$HOME/.config/encfs-cloud.xml
@@ -53,7 +52,6 @@ if [ ! "$(which acd_cli)" ] || [ ! "$(which rclone)" ]; then
 	echo "http://rclone.org/install/"
 	exit 1
 fi
-
 
 # script logic begins here
 # if CLOUD_PATH does not exist, check if folder is writeable, if not create and chown it with sudo
@@ -216,7 +214,7 @@ clean-deleted)
 	if [ "$(ls -A $OVERLAY_CACHE)" ]; then
 		find $OVERLAY_CACHE -type d -empty -delete
 	fi
-	sudo sudo mount -t unionfs -o remount,incgen unionfs $OVERLAY_PATH
+	sudo mount -t unionfs -o remount,incgen unionfs $OVERLAY_PATH
 	;;
 clean-old-files)
 	days=730

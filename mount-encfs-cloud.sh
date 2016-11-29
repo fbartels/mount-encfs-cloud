@@ -48,7 +48,7 @@ if [ ! "$(which unionfs-fuse)" ]; then
 	exit 1
 fi
 
-if [ ! "$(which acd_cli)" ] || [ ! "$(which rclone)" ]; then
+if [ ! "$(which acd_cli)" ] && [ ! "$(which rclone)" ]; then
 	echo "Neither acd_cli nor rclone is not installed"
 	echo "https://github.com/yadayada/acd_cli/blob/master/docs/setup.rst"
 	echo "http://rclone.org/install/"
@@ -138,7 +138,7 @@ create_encfs(){
 	mv $OVERLAY_CACHE/.encfs6.xml $ENCFS_CONFIG
 }
 
-if [ ! -e $HOME/.cache/acd_cli ]; then
+if [ $MOUNT_ENGINE == "acdcli" ] &&  [ ! -e $HOME/.cache/acd_cli ]; then
 	echo "no oauth data for acd_cli found found. running 'acd_cli init'"
 	acd_cli init
 	exit

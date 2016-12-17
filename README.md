@@ -1,3 +1,5 @@
+# IMPORTANT: a new take just using rclone for mounting/transfer/encryption is in the work at https://github.com/fbartels/mount-rclone-helpers
+
 # Mounting of encrypted cloud storage with Encfs and UnisonFS
 
 ## Theorie
